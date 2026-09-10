@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cấp tài khoản · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Cấp tài khoản học sinh</h1>
+    <p class="sub">Trình duyệt chỉ đọc Excel rồi gửi họ tên / SĐT / lớp / năm. Username, password và createUser chạy trên Cloud Function.</p>
+    <div class="card">
+      <label>File Excel (cột: hoTen, sdt, lop, namNhapHoc)</label>
+      <input id="file" type="file" accept=".xlsx,.xls,.csv" />
+      <p class="err" id="err"></p>
+      <button class="btn" id="run" type="button">Gửi lên Function</button>
+    </div>
+    <div class="card" id="result" hidden style="margin-top:14px">
+      <h2>File phát (một lần)</h2>
+      <table class="data" id="tbl"></table>
+      <button class="btn ghost" id="dl" type="button" style="margin-top:10px">Tải CSV</button>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { provisionStudents } from "./js/callables.js";
+    import { watchAuth, logout } from "./js/auth.js";
+    mountChrome({ active: "home", who: "GV<br><a href='home.html'>Home</a>" });
+    watchAuth((user, profile) => {
+      if (profile && profile.role !== "teacher") location.href = "home-hs.html";
+    });
+
+    function rowsFromFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Không đọc được file."));
+        reader.onload = () => {
+          const wb = XLSX.read(reader.result, { type: "array" });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+          const rows = json.map((r) => ({
+            hoTen: r.hoTen || r.HoTen || r["Họ tên"] || r["ho ten"] || "",
+            sdt: r.sdt || r.SDT || r["SĐT"] || r.dienThoai || "",
+            lop: r.lop || r.Lop || r["Lớp"] || "",
+            namNhapHoc: r.namNhapHoc || r.NamNhapHoc || r["Năm nhập học"] || "",
+          }));
+          resolve(rows);
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    document.getElementById("run").addEventListener("click", async () => {
+      const err = document.getElementById("err");
+      err.textContent = "";
+      const file = document.getElementById("file").files[0];
+      if (!file) { err.textContent = "Chọn file Excel."; return; }
+      try {
+        const rows = await rowsFromFile(file);
+        const data = await provisionStudents(rows);
+        const tbl = document.getElementById("tbl");
+        tbl.innerHTML = "<tr><th>Họ tên</th><th>Lớp</th><th>Username</th><th>Mật khẩu mặc định</th></tr>" +
+          (data.issued || []).map((x) =>
+            `<tr><td>${x.hoTen}</td><td>${x.lop}</td><td>${x.username}</td><td>${x.password}</td></tr>`
+          ).join("");
+        document.getElementById("result").hidden = false;
+        window.__issued = data.issued || [];
+      } catch (e) {
+        err.textContent = e.message || String(e);
+      }
+    });
+
+    document.getElementById("dl").addEventListener("click", () => {
+      const rows = window.__issued || [];
+      const csv = "hoTen,lop,username,password\n" +
+        rows.map((x) => [x.hoTen, x.lop, x.username, x.password].join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "phat-tai-khoan.csv";
+      a.click();
+    });
+  </script>
+</body>
+</html>

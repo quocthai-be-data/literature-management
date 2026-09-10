@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luyện tập · giáo viên</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Luyện tập</h1>
+    <div class="accent"></div>
+    <p class="sub">Ba loại tài nguyên. Mẫu khóa với học sinh đến khi nộp.</p>
+    <div class="grid-3">
+      <div class="fn-box"><div class="kicker">Loại 1</div><h2>Đề giao</h2><p>Hạn nộp, lớp, đảo A/B.</p></div>
+      <div class="fn-box"><div class="kicker">Loại 2</div><h2>Tự luyện</h2><p>Kho đề theo cùng cây chủ đề.</p></div>
+      <div class="fn-box"><div class="kicker">Loại 3</div><h2>Khung & mẫu</h2><p>Chỉ mở sau khi HS nộp.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="item">
+        <div>
+          <div class="name">Đoạn NLXH — thích ứng</div>
+          <div class="meta">Giao 12A1 · 8 bài chờ</div>
+        </div>
+        <span class="chip on">Chấm</span>
+      </div>
+      <div class="item">
+        <div>
+          <div class="name">Đề 120 phút minh họa</div>
+          <div class="meta">Kho tự luyện · đảo B</div>
+        </div>
+        <span class="chip">Kho</span>
+      </div>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    mountChrome({ active: "luyen", who: "Giáo viên" });
+  </script>
+</body>
+</html>

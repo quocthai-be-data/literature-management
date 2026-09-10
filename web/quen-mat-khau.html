@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quên mật khẩu · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="login-page">
+  <div class="login-split">
+    <section class="login-visual" style="background-image:url('assets/background_log_in.png')"></section>
+    <section class="login-panel">
+      <div class="login-top">
+        <div>
+          <strong>THPT Huỳnh Văn Nghệ</strong>
+          <span>Bộ môn Ngữ Văn</span>
+        </div>
+        <img src="assets/logo_hvn.jpg" alt="Logo trường" />
+      </div>
+      <div class="login-form-wrap">
+        <form class="login-form" id="reset-form">
+          <h1>Quên mật khẩu</h1>
+          <div class="accent"></div>
+          <p class="sub">Chỉ dùng sau khi đã tự đặt mật khẩu. Học sinh chưa đổi mật khẩu mặc định thì gặp cô.</p>
+          <label>Email giáo viên hoặc tên đăng nhập</label>
+          <input name="identifier" required placeholder="email GV hoặc nvan345624" />
+          <p class="err" id="reset-error"></p>
+          <p class="sub" id="reset-ok" hidden>Nếu tài khoản hợp lệ, hướng dẫn đã được gửi.</p>
+          <button class="btn" type="submit" style="width:100%;margin-top:8px">Gửi hướng dẫn</button>
+          <p class="sub" style="margin-top:14px"><a href="login.html">Quay lại đăng nhập</a></p>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { requestPasswordReset, friendlyAuthError } from "./js/auth.js";
+    import { configReady } from "./js/firebase-init.js";
+    import { footerHtml } from "./js/shell.js";
+    document.getElementById("footer-slot").innerHTML = footerHtml();
+    const form = document.getElementById("reset-form");
+    const err = document.getElementById("reset-error");
+    const ok = document.getElementById("reset-ok");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.textContent = "";
+      ok.hidden = true;
+      if (!configReady) {
+        ok.hidden = false;
+        return;
+      }
+      try {
+        await requestPasswordReset(form.identifier.value);
+        ok.hidden = false;
+      } catch (ex) {
+        err.textContent = friendlyAuthError(ex);
+      }
+    });
+  </script>
+</body>
+</html>

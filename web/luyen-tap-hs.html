@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luyện tập · học sinh</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Luyện tập</h1>
+    <div class="accent"></div>
+    <div class="card">
+      <div class="kicker">Cô giao</div>
+      <div class="item">
+        <div>
+          <div class="name">Đoạn NLXH · Năng lực thích ứng</div>
+          <div class="meta">Hạn 21:00 · mẫu đang khóa</div>
+        </div>
+        <a class="btn" href="#">Làm bài</a>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">Tự luyện</div>
+      <div class="item">
+        <div>
+          <div class="name">Đề minh họa 120 phút</div>
+          <div class="meta">Đảo điểm A</div>
+        </div>
+        <a class="btn ghost" href="#">Luyện</a>
+      </div>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    mountChrome({ active: "luyen", role: "student", who: "Học sinh" });
+  </script>
+</body>
+</html>

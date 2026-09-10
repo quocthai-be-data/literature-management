@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đổi mật khẩu · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="login-page">
+  <div class="login-split">
+    <section class="login-visual" style="background-image:url('assets/background_log_in.png')"></section>
+    <section class="login-panel">
+      <div class="login-top">
+        <div>
+          <strong>THPT Huỳnh Văn Nghệ</strong>
+          <span>Bộ môn Ngữ Văn</span>
+        </div>
+        <img src="assets/logo_hvn.jpg" alt="Logo trường" />
+      </div>
+      <div class="login-form-wrap">
+        <form class="login-form" id="pw-form">
+          <h1>Đặt mật khẩu mới</h1>
+          <div class="accent"></div>
+          <p class="sub">Lần đầu đăng nhập phải đổi mật khẩu trước khi vào lớp.</p>
+          <label>Mật khẩu hiện tại</label>
+          <input name="current" type="password" required />
+          <label>Mật khẩu mới</label>
+          <input name="next" type="password" minlength="8" required placeholder="Tối thiểu 8 ký tự" />
+          <label>Nhập lại mật khẩu mới</label>
+          <input name="again" type="password" minlength="8" required />
+          <p class="err" id="pw-error"></p>
+          <button class="btn" type="submit" style="width:100%;margin-top:8px">Lưu và vào lớp</button>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { changePassword, loadProfile, friendlyAuthError } from "./js/auth.js";
+    import { auth, configReady } from "./js/firebase-init.js";
+    import { footerHtml } from "./js/shell.js";
+    document.getElementById("footer-slot").innerHTML = footerHtml();
+    const form = document.getElementById("pw-form");
+    const err = document.getElementById("pw-error");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.textContent = "";
+      if (form.next.value !== form.again.value) {
+        err.textContent = "Hai mật khẩu mới chưa trùng.";
+        return;
+      }
+      if (!configReady) {
+        location.href = "home-hs.html";
+        return;
+      }
+      try {
+        await changePassword({
+          currentPassword: form.current.value,
+          nextPassword: form.next.value,
+        });
+        const profile = auth.currentUser ? await loadProfile(auth.currentUser.uid) : null;
+        location.href = profile && profile.role === "teacher" ? "home.html" : "home-hs.html";
+      } catch (ex) {
+        err.textContent = friendlyAuthError(ex);
+      }
+    });
+  </script>
+</body>
+</html>

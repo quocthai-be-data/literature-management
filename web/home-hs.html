@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang chủ học sinh · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Việc tối nay</h1>
+    <div class="accent"></div>
+    <p class="sub">Việc cô giao hiện trên cùng.</p>
+    <div class="pillars">
+      <a class="fn-box" href="hoc-hs.html"><div class="kicker">Học</div><h2>Bài giảng</h2><p>Theo chủ đề cô đã đăng.</p></a>
+      <a class="fn-box" href="luyen-tap-hs.html"><div class="kicker">Luyện tập</div><h2>Đề và mẫu</h2><p>Mẫu mở sau khi nộp.</p></a>
+    </div>
+    <div class="card">
+      <h2>Cô giao</h2>
+      <div class="item">
+        <div>
+          <div class="name">Đoạn NLXH · Năng lực thích ứng</div>
+          <div class="meta">Hạn 21:00 · chưa nộp</div>
+        </div>
+        <a class="btn" href="luyen-tap-hs.html">Làm bài</a>
+      </div>
+      <div class="item">
+        <div>
+          <div class="name">Đọc hiểu · Văn bản nghị luận</div>
+          <div class="meta">Bài giảng mới</div>
+        </div>
+        <a class="btn ghost" href="hoc-hs.html">Xem</a>
+      </div>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { watchAuth, logout } from "./js/auth.js";
+    mountChrome({ active: "home", role: "student", who: "Học sinh<br><a href='login.html'>Đăng xuất</a>" });
+    watchAuth((user, profile) => {
+      if (!user) return;
+      const name = (profile && profile.hoTen) || "Học sinh";
+      const lop = profile && profile.lop ? " · " + profile.lop : "";
+      mountChrome({ active: "home", role: "student", who: name + lop + "<br><a href='login.html' id='out'>Đăng xuất</a>" });
+      document.getElementById("out")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        logout().then(() => { location.href = "login.html"; });
+      });
+    });
+  </script>
+</body>
+</html>

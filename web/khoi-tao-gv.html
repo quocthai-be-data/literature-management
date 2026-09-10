@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khởi tạo giáo viên · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Tạo tài khoản giáo viên để test</h1>
+    <p class="sub">Trang này chỉ gọi Cloud Function <code>seedTeacher</code>. Mật khẩu không nằm trong frontend — bạn đã set secret trên Firebase.</p>
+    <div class="card">
+      <label>Email giáo viên</label>
+      <input id="email" value="duyen.nguyen@thpthuynhvannge.edu.vn" />
+      <label>Họ tên</label>
+      <input id="name" value="Nguyễn Lưu Hoàng Hữu Duyên" />
+      <label>Token khởi tạo (TEACHER_BOOTSTRAP_TOKEN)</label>
+      <input id="token" type="password" placeholder="Token bạn vừa set trên Firebase" />
+      <p class="err" id="err"></p>
+      <p class="sub" id="ok" hidden></p>
+      <button class="btn" id="go" type="button">Tạo / cập nhật hồ sơ GV</button>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { seedTeacher } from "./js/callables.js";
+    mountChrome({ active: "home", who: "<a href='login.html'>Đăng nhập</a>" });
+    document.getElementById("go").addEventListener("click", async () => {
+      const err = document.getElementById("err");
+      const ok = document.getElementById("ok");
+      err.textContent = "";
+      ok.hidden = true;
+      try {
+        const data = await seedTeacher({
+          email: document.getElementById("email").value,
+          displayName: document.getElementById("name").value,
+          token: document.getElementById("token").value,
+        });
+        ok.hidden = false;
+        ok.textContent = "Xong. UID: " + data.uid + " · đăng nhập bằng email này và mật khẩu secret.";
+      } catch (e) {
+        err.textContent = e.message || String(e);
+      }
+    });
+  </script>
+</body>
+</html>

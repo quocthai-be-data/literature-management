@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Học · giáo viên</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Học — bài giảng</h1>
+    <div class="accent"></div>
+    <p class="sub">Chọn chủ đề cấp 2 rồi đăng: tên tài liệu, link, nền mặc định hoặc ảnh từ máy.</p>
+    <div class="chips">
+      <span class="chip on">Đọc hiểu</span>
+      <span class="chip">Viết đoạn</span>
+      <span class="chip">Viết bài</span>
+      <span class="chip">Đề 120 phút</span>
+      <span class="chip">Nền tảng ôn</span>
+    </div>
+    <div class="chips">
+      <span class="chip">Văn bản văn học</span>
+      <span class="chip on">Văn bản nghị luận</span>
+      <span class="chip">Văn bản thông tin</span>
+    </div>
+    <div class="card">
+      <div class="item">
+        <div>
+          <div class="name">Nhận biết luận điểm</div>
+          <div class="meta">Đã xuất bản · 12A1, 12A3</div>
+        </div>
+        <a class="btn ghost" href="#">Sửa</a>
+      </div>
+      <div class="item">
+        <div>
+          <div class="name">Giọng điệu nghị luận</div>
+          <div class="meta">Nháp</div>
+        </div>
+        <a class="btn ghost" href="#">Sửa</a>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Đăng bài giảng</h2>
+      <label>Tên tài liệu</label>
+      <input placeholder="Ví dụ: Nhận biết luận điểm" />
+      <label>Link tài liệu</label>
+      <input placeholder="https://docs.google.com/..." />
+      <label>Nền</label>
+      <select>
+        <option>Nền mặc định kiểu trang tài liệu</option>
+        <option>Ảnh tải từ máy</option>
+      </select>
+      <label>Lớp nhận</label>
+      <select>
+        <option>12A1 và 12A3</option>
+        <option>Chỉ 12A1</option>
+        <option>Chỉ 12A3</option>
+      </select>
+      <p style="margin-top:12px">
+        <button class="btn ghost" type="button">Lưu nháp</button>
+        <button class="btn" type="button">Xuất bản</button>
+      </p>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    mountChrome({ active: "hoc", who: "Giáo viên" });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang chủ giáo viên · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap">
+    <h1>Việc hôm nay</h1>
+    <div class="accent"></div>
+    <p class="sub">Home chỉ điều phối. Soạn nội dung ở Học / Luyện tập.</p>
+    <div class="grid-4">
+      <div class="stat"><b>2</b><small>Lớp đang dạy</small></div>
+      <div class="stat"><b>1</b><small>Bài giảng nháp</small></div>
+      <div class="stat"><b>12</b><small>Bài chưa chấm</small></div>
+      <div class="stat"><b>3</b><small>Đề sắp hết hạn</small></div>
+    </div>
+    <div class="pillars">
+      <a class="fn-box" href="hoc.html"><div class="kicker">Trụ 1</div><h2>Học</h2><p>Bài giảng theo cây chủ đề đề thi.</p></a>
+      <a class="fn-box" href="luyen-tap.html"><div class="kicker">Trụ 2</div><h2>Luyện tập</h2><p>Đề giao, tự luyện, khung mẫu.</p></a>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Cần xử lý · Học</h2>
+        <div class="item"><div><div class="name">2.1 Đoạn NLXH</div><div class="meta">Chưa có bài published</div></div><a class="btn ghost" href="hoc.html">Thêm</a></div>
+        <div class="item"><div><div class="name">Nháp: Giọng điệu nghị luận</div><div class="meta">Chưa xuất bản</div></div><a class="btn ghost" href="hoc.html">Sửa</a></div>
+      </div>
+      <div class="card">
+        <h2>Cần xử lý · Luyện tập</h2>
+        <div class="item"><div><div class="name">12A1 · Đoạn thích ứng</div><div class="meta">8 bài chờ chấm</div></div><a class="btn" href="luyen-tap.html">Chấm</a></div>
+        <div class="item"><div><div class="name">12A3 · Đề 120 phút</div><div class="meta">Hết hạn 21h</div></div><a class="btn ghost" href="luyen-tap.html">Xem</a></div>
+      </div>
+    </div>
+    <p style="margin-top:16px">
+      <a class="btn ghost" href="cap-tai-khoan.html">Cấp TK học sinh</a>
+      <a class="btn ghost" href="khoi-tao-gv.html">Khởi tạo GV</a>
+    </p>
+  </main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { watchAuth, logout } from "./js/auth.js";
+    mountChrome({ active: "home", role: "teacher", who: "Giáo viên<br><a href='login.html'>Đăng xuất</a>" });
+    watchAuth((user, profile) => {
+      if (!user) return;
+      const name = (profile && profile.hoTen) || user.email || "Giáo viên";
+      mountChrome({ active: "home", role: "teacher", who: name + "<br><a href='login.html' id='out'>Đăng xuất</a>" });
+      document.getElementById("out")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        logout().then(() => { location.href = "login.html"; });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function myUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function passwordOk() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && myUser().mustChangePassword != true;
+    }
+    function isTeacher() {
+      return passwordOk() && myUser().role == "teacher";
+    }
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Client không được tạo user / username. Chỉ Admin SDK (Cloud Function).
+    match /usernames/{name} {
+      allow read: if isTeacher();
+      allow write: if false;
+    }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isTeacher();
+      allow create, delete: if false;
+      // HS vừa đổi MK trên Auth được phép tắt cờ trên đúng document của mình.
+      // Không được sửa role / lớp / username từ client.
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["mustChangePassword", "updatedAt"])
+        && request.resource.data.mustChangePassword == false
+        && resource.data.mustChangePassword == true;
+    }
+
+    match /materials/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+    match /submissions/{id} {
+      allow read: if passwordOk() && (
+        isTeacher() || resource.data.studentId == request.auth.uid
+      );
+      allow create: if passwordOk()
+        && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isTeacher()
+        || (passwordOk() && resource.data.studentId == request.auth.uid);
+    }
+    match /classes/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+    match /grades/{id} {
+      allow read: if passwordOk() && (
+        isTeacher() || resource.data.studentId == request.auth.uid
+      );
+      allow write: if isTeacher();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

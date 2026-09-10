@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập · Ngữ văn 12</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="login-page">
+  <div class="login-split">
+    <section
+      class="login-visual"
+      style="background-image:url('assets/background_log_in.png')"
+      aria-label="Cổng trường THPT Huỳnh Văn Nghệ"
+    ></section>
+    <section class="login-panel">
+      <div class="login-top">
+        <div>
+          <strong>THPT Huỳnh Văn Nghệ</strong>
+          <span>Bộ môn Ngữ Văn</span>
+        </div>
+        <img src="assets/logo_hvn.jpg" alt="Logo trường THPT Huỳnh Văn Nghệ" />
+      </div>
+      <div class="login-form-wrap">
+        <form class="login-form" id="login-form">
+          <h1>Đăng nhập</h1>
+          <div class="accent"></div>
+          <p class="sub">Tài khoản do giáo viên cấp. Không tự đăng ký.</p>
+          <div class="banner" id="config-note" hidden>
+            Chưa dán firebaseConfig — form vẫn mở trang chủ giả để duyệt giao diện.
+          </div>
+          <label>Vai trò</label>
+          <select name="role">
+            <option value="student">Học sinh</option>
+            <option value="teacher">Giáo viên</option>
+          </select>
+          <label>Tên đăng nhập</label>
+          <input name="identifier" required placeholder="HS: nvan345624  ·  GV: email nhà trường" />
+          <label>Mật khẩu</label>
+          <input name="password" type="password" required placeholder="Mật khẩu mặc định hoặc đã đổi" />
+          <p class="err" id="login-error"></p>
+          <button class="btn" type="submit" style="width:100%;margin-top:8px">Đăng nhập</button>
+          <p class="sub" style="margin-top:14px">
+            <a href="quen-mat-khau.html">Quên mật khẩu?</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div id="footer-slot"></div>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>
