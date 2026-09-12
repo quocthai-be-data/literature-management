@@ -43,7 +43,7 @@ let lessonModalWeek = null;
 let lessonModalItem = null;
 
 function ensureLessonModal() {
-  if ($"lesson-modal") return;
+  if ($("lesson-modal")) return;
   const wrap = document.createElement("div");
   wrap.id = "lesson-modal";
   wrap.className = "modal-back hidden";
