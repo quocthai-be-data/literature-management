@@ -118,6 +118,7 @@ export function bootProfile({ role, titleWho }) {
   document.getElementById("out").addEventListener("click", async (e) => {
     e.preventDefault();
     if (!(await confirmLeave())) return;
+    if (!window.confirm("Bạn muốn đăng xuất khỏi tài khoản?")) return;
     await logout();
     location.href = "login.html";
   });
