@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thông tin học sinh</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <div class="profile-split">
+    <section class="profile-form">
+      <h1>Thông tin học sinh</h1>
+      <div class="accent"></div>
+      <form id="pf">
+        <label>Tên</label>
+        <input name="hoTen" />
+        <label>SĐT</label>
+        <input name="sdt" />
+        <label>Lớp</label>
+        <input name="lop" />
+        <label>Gmail</label>
+        <input name="gmail" type="email" />
+        <p class="err" id="msg"></p>
+        <button class="btn" type="submit" style="margin-top:12px">Lưu</button>
+        <p style="margin-top:22px"><a class="btn ghost" href="login.html" id="out">Đăng xuất</a></p>
+      </form>
+    </section>
+    <aside class="profile-visual" style="background-image:url('assets/background_info.png')"></aside>
+  </div>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { watchAuth, logout } from "./js/auth.js";
+    import { saveUserProfile } from "./js/firestore.js";
+    mountChrome({ active: "", role: "student", who: "Học sinh" });
+    const form = document.getElementById("pf");
+    watchAuth((user, profile) => {
+      if (!user) return;
+      const name = (profile && profile.hoTen) || "";
+      mountChrome({ active: "", role: "student", who: name });
+      form.hoTen.value = name;
+      form.sdt.value = (profile && profile.sdt) || "";
+      form.lop.value = (profile && profile.lop) || "";
+      form.gmail.value = (profile && profile.gmail) || user.email || "";
+    });
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const { auth } = await import("./js/firebase-init.js");
+      const u = auth && auth.currentUser;
+      const msg = document.getElementById("msg");
+      msg.textContent = "";
+      if (!u) { msg.textContent = "Chưa đăng nhập."; return; }
+      try {
+        await saveUserProfile(u.uid, {
+          hoTen: form.hoTen.value.trim(),
+          sdt: form.sdt.value.trim(),
+          lop: form.lop.value.trim(),
+          gmail: form.gmail.value.trim(),
+        });
+        msg.textContent = "Đã lưu.";
+        mountChrome({ active: "", role: "student", who: form.hoTen.value.trim() });
+      } catch (err) { msg.textContent = err.message; }
+    });
+    document.getElementById("out").addEventListener("click", (e) => {
+      e.preventDefault();
+      logout().then(() => { location.href = "login.html"; });
+    });
+  </script>
+</body>
+</html>
