@@ -31,42 +31,8 @@
   </div>
   <div id="footer-slot"></div>
   <script type="module">
-    import { mountChrome } from "./js/shell.js";
-    import { watchAuth, logout } from "./js/auth.js";
-    import { saveUserProfile } from "./js/firestore.js";
-    mountChrome({ active: "", role: "student", who: "Học sinh" });
-    const form = document.getElementById("pf");
-    watchAuth((user, profile) => {
-      if (!user) return;
-      const name = (profile && profile.hoTen) || "";
-      mountChrome({ active: "", role: "student", who: name });
-      form.hoTen.value = name;
-      form.sdt.value = (profile && profile.sdt) || "";
-      form.lop.value = (profile && profile.lop) || "";
-      form.gmail.value = (profile && profile.gmail) || user.email || "";
-    });
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const { auth } = await import("./js/firebase-init.js");
-      const u = auth && auth.currentUser;
-      const msg = document.getElementById("msg");
-      msg.textContent = "";
-      if (!u) { msg.textContent = "Chưa đăng nhập."; return; }
-      try {
-        await saveUserProfile(u.uid, {
-          hoTen: form.hoTen.value.trim(),
-          sdt: form.sdt.value.trim(),
-          lop: form.lop.value.trim(),
-          gmail: form.gmail.value.trim(),
-        });
-        msg.textContent = "Đã lưu.";
-        mountChrome({ active: "", role: "student", who: form.hoTen.value.trim() });
-      } catch (err) { msg.textContent = err.message; }
-    });
-    document.getElementById("out").addEventListener("click", (e) => {
-      e.preventDefault();
-      logout().then(() => { location.href = "login.html"; });
-    });
+    import { bootProfile } from "./js/profile-page.js";
+    bootProfile({ role: "student", titleWho: "Học sinh" });
   </script>
 </body>
 </html>
