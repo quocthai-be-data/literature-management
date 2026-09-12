@@ -46,6 +46,24 @@ service cloud.firestore {
       allow write: if isTeacher();
     }
 
+    match /practiceFolders/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+    match /practiceItems/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+
+    match /materialFolders/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+    match /materialItems/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+
     match /materials/{id} {
       allow read: if passwordOk();
       allow write: if isTeacher();

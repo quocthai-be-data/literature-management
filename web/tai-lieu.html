@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tài liệu tham khảo</title>
+  <title>Tài liệu tham khảo · Ngữ văn 12</title>
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body class="page-shell">
   <div id="header-slot"></div>
-  <main class="wrap"></main>
+  <div class="course-layout">
+    <aside class="week-pane">
+      <button class="btn" id="btn-add-folder" type="button" style="width:100%">Thêm thẻ</button>
+      <h3>Danh sách thẻ</h3>
+      <ul class="week-list" id="folder-list"></ul>
+    </aside>
+    <section class="lesson-pane">
+      <h1 id="folder-title">Tài liệu tham khảo</h1>
+      <div class="accent"></div>
+      <div id="item-list"></div>
+    </section>
+  </div>
   <div id="footer-slot"></div>
-  <script type="module">
-    import { mountChrome } from "./js/shell.js";
-    import { watchAuth } from "./js/auth.js";
-    mountChrome({ active: "tailieu", role: "teacher", who: "" });
-    watchAuth((user, profile) => {
-      const role = profile && profile.role === "student" ? "student" : "teacher";
-      const name = (profile && profile.hoTen) || "";
-      mountChrome({ active: "tailieu", role, who: name });
-    });
-  </script>
+  <script type="module" src="js/tai-lieu.js"></script>
 </body>
 </html>
