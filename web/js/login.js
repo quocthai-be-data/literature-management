@@ -1,8 +1,5 @@
 import { loginWithIdentifier, friendlyAuthError } from "./auth.js";
 import { configReady } from "./firebase-init.js";
-import { footerHtml } from "./shell.js";
-
-document.getElementById("footer-slot").innerHTML = footerHtml();
 
 const form = document.getElementById("login-form");
 const err = document.getElementById("login-error");
