@@ -104,7 +104,6 @@ button, input, select, textarea { font: inherit; }
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--teal);
-  background: #fff;
   display: block;
 }
 
@@ -192,6 +191,15 @@ input, select, textarea {
   background: #fff;
   color: var(--ink);
 }
+.banner {
+  background: var(--lime-pale);
+  border: 1px solid #d4e88a;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
 .err { color: var(--danger); font-size: 13px; margin-top: 8px; min-height: 1em; }
 
 .site-footer {
@@ -274,6 +282,9 @@ input, select, textarea {
   min-height: calc(100vh - var(--header-h) + 48px);
 }
 
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.data th, table.data td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+
 .course-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -300,7 +311,18 @@ input, select, textarea {
 .week-item:hover { border-color: var(--line); }
 .week-item.on { background: #e7f8fa; border-color: var(--teal); }
 .week-item .title { flex: 1; font-size: 14px; }
+.week-item.child { margin-left: 14px; background: #fbfefe; }
 .week-item.dragging { opacity: .5; }
+.lesson-card .deadline {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-right: 4px;
+}
+.lesson-card .deadline.over {
+  color: var(--danger);
+  font-weight: 650;
+}
 .kebab {
   border: 0;
   background: transparent;
@@ -376,13 +398,9 @@ input, select, textarea {
 .modal {
   background: #fff;
   border-radius: 14px;
-  padding: 18px;
+  padding: 22px 24px;
   width: min(420px, 92vw);
   box-shadow: var(--shadow);
 }
-.hidden { display: none !important; }
-
-@media (max-width: 900px) {
-  .login-page .login-split { grid-template-columns: 1fr; }
-  .login-page .login-visual { min-height: 220px; }
-}
+.modal h2 { margin-bottom: 8px; }
+.modal.hidden, .modal-back.hidden { display: none; }
