@@ -8,45 +8,20 @@
 </head>
 <body class="page-shell">
   <div id="header-slot"></div>
-  <main class="wrap">
-    <h1>Luyện tập</h1>
-    <div class="accent"></div>
-    <p class="sub">Ba loại tài nguyên. Mẫu khóa với học sinh đến khi nộp.</p>
-    <div class="grid-3">
-      <div class="fn-box"><div class="kicker">Loại 1</div><h2>Đề giao</h2><p>Hạn nộp, lớp, đảo A/B.</p></div>
-      <div class="fn-box"><div class="kicker">Loại 2</div><h2>Tự luyện</h2><p>Kho đề theo cùng cây chủ đề.</p></div>
-      <div class="fn-box"><div class="kicker">Loại 3</div><h2>Khung & mẫu</h2><p>Chỉ mở sau khi HS nộp.</p></div>
-    </div>
-    <div class="card" style="margin-top:16px">
-      <div class="item">
-        <div>
-          <div class="name">Đoạn NLXH — thích ứng</div>
-          <div class="meta">Giao 12A1 · 8 bài chờ</div>
-        </div>
-        <span class="chip on">Chấm</span>
-      </div>
-      <div class="item">
-        <div>
-          <div class="name">Đề 120 phút minh họa</div>
-          <div class="meta">Kho tự luyện · đảo B</div>
-        </div>
-        <span class="chip">Kho</span>
-      </div>
-    </div>
-  </main>
+  <div class="course-layout">
+    <aside class="week-pane">
+      <button class="btn" id="btn-add-folder" type="button" style="width:100%">Thêm thẻ</button>
+      <h3>Danh sách thẻ</h3>
+      <ul class="week-list" id="folder-list"></ul>
+    </aside>
+    <section class="lesson-pane">
+      <h1 id="folder-title">Luyện tập</h1>
+      <div class="accent"></div>
+      <div id="item-list"></div>
+    </section>
+  </div>
   <div id="footer-slot"></div>
-  <script type="module">
-    import { mountChrome } from "./js/shell.js";
-    import { watchAuth } from "./js/auth.js";
-    mountChrome({ active: "luyen", role: "teacher", who: "Giáo viên" });
-    watchAuth((user, profile) => {
-      if (!user) return;
-      mountChrome({
-        active: "luyen",
-        role: "teacher",
-        who: (profile && profile.hoTen) || user.email || "Giáo viên",
-      });
-    });
-  </script>
+  <script>window.NV_ROLE = "teacher";</script>
+  <script type="module" src="js/luyen-tap.js"></script>
 </body>
 </html>

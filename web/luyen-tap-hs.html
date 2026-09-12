@@ -8,43 +8,19 @@
 </head>
 <body class="page-shell">
   <div id="header-slot"></div>
-  <main class="wrap">
-    <h1>Luyện tập</h1>
-    <div class="accent"></div>
-    <div class="card">
-      <div class="kicker">Cô giao</div>
-      <div class="item">
-        <div>
-          <div class="name">Đoạn NLXH · Năng lực thích ứng</div>
-          <div class="meta">Hạn 21:00 · mẫu đang khóa</div>
-        </div>
-        <a class="btn" href="#">Làm bài</a>
-      </div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <div class="kicker">Tự luyện</div>
-      <div class="item">
-        <div>
-          <div class="name">Đề minh họa 120 phút</div>
-          <div class="meta">Đảo điểm A</div>
-        </div>
-        <a class="btn ghost" href="#">Luyện</a>
-      </div>
-    </div>
-  </main>
+  <div class="course-layout">
+    <aside class="week-pane">
+      <h3>Danh sách thẻ</h3>
+      <ul class="week-list" id="folder-list"></ul>
+    </aside>
+    <section class="lesson-pane">
+      <h1 id="folder-title">Luyện tập</h1>
+      <div class="accent"></div>
+      <div id="item-list"></div>
+    </section>
+  </div>
   <div id="footer-slot"></div>
-  <script type="module">
-    import { mountChrome } from "./js/shell.js";
-    import { watchAuth } from "./js/auth.js";
-    mountChrome({ active: "luyen", role: "student", who: "Học sinh" });
-    watchAuth((user, profile) => {
-      if (!user) return;
-      mountChrome({
-        active: "luyen",
-        role: "student",
-        who: (profile && profile.hoTen) || user.email || "Học sinh",
-      });
-    });
-  </script>
+  <script>window.NV_ROLE = "student";</script>
+  <script type="module" src="js/luyen-tap.js"></script>
 </body>
 </html>
