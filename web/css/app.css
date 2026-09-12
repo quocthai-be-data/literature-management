@@ -38,9 +38,9 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 16px;
   padding: 10px 22px;
-  background: linear-gradient(90deg, #cfff4d 0%, #2ec9b6 48%, #04b4c4 100%);
+  background: linear-gradient(90deg, #f2ffd6 0%, #e7fbf6 48%, #d4f3f6 100%);
   border-bottom: 3px solid #fff;
-  box-shadow: 0 8px 22px rgba(4, 80, 90, 0.18);
+  box-shadow: 0 6px 18px rgba(4, 180, 196, 0.14);
   position: fixed;
   top: 0;
   left: 0;
@@ -78,8 +78,8 @@ button, input, select, textarea { font: inherit; }
   padding: 0 !important;
   border-radius: 50% !important;
 }
-.nav-main a:hover { background: rgba(255, 255, 255, 0.38); }
-.nav-main a.on { background: #0e3d45; color: #fff; }
+.nav-main a:hover { background: rgba(255,255,255,.65); }
+.nav-main a.on { background: var(--teal); color: #fff; }
 .nav-user {
   display: flex;
   align-items: center;
