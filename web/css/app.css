@@ -271,8 +271,33 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
 }
-.login-form { width: 100%; max-width: 360px; }
+/* Khung form auth: nền xanh nhạt, không át input */
+.login-form {
+  width: 100%;
+  max-width: 380px;
+  padding: 22px 24px 24px;
+  border-radius: 16px;
+  border: 1px solid #c5e8ec;
+  background: #eef8fa;
+  box-shadow: 0 6px 20px rgba(4, 180, 196, 0.08);
+}
 .login-form h1 { font-size: 24px; margin-bottom: 6px; }
+.login-form input,
+.login-form select,
+.login-form textarea {
+  background: #fff;
+  border-color: #c9e0e4;
+}
+.login-form input:focus,
+.login-form select:focus,
+.login-form textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(4, 180, 196, 0.15);
+}
+.login-form .btn {
+  /* giữ teal đậm — không bị nền form át */
+}
 
 .page-shell { display: block; }
 .page-shell > .wrap,
