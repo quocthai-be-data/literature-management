@@ -1,6 +1,3 @@
-const AVATAR_HS = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffffff' stroke='%23111111' stroke-width='2.4'/><circle cx='32' cy='24' r='10' fill='%23111111'/><path d='M14 54c3-12 12-17 18-17s15 5 18 17' fill='%23111111'/></svg>";
-const AVATAR_GV = AVATAR_HS;
-
 const SCHOOL_FB = "https://www.facebook.com/profile.php?id=61584605757923";
 const DEV_FB = "https://www.facebook.com/quocthai1796";
 const DEV_MAIL = "quocthai17096@gmail.com";
@@ -62,7 +59,7 @@ export function headerHtml({ active = "home", who = "", role = "teacher" } = {})
   const bai = role === "student" ? "bai-giang-hs.html" : "bai-giang.html";
   const luyen = role === "student" ? "luyen-tap-hs.html" : "luyen-tap.html";
   const hoso = role === "student" ? "hoso-hs.html" : "hoso.html";
-  const avatar = role === "student" ? AVATAR_HS : AVATAR_GV;
+  const avatar = role === "student" ? "assets/default_avatar.jpg" : "assets/default_teacher_avatar.jpg";
   return `
 <header class="site-header">
   <a class="brand" href="${home}">

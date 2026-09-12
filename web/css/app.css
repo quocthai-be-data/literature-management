@@ -27,6 +27,10 @@ img { max-width: 100%; display: block; }
 a { color: var(--teal-dark); }
 button, input, select, textarea { font: inherit; }
 
+#header-slot {
+  display: block;
+  min-height: var(--header-h);
+}
 .site-header {
   min-height: var(--header-h);
   display: flex;
@@ -34,11 +38,14 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 16px;
   padding: 10px 22px;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-  position: sticky;
+  background: linear-gradient(90deg, #f2ffd6 0%, #e7fbf6 48%, #d4f3f6 100%);
+  border-bottom: 3px solid var(--teal);
+  box-shadow: 0 6px 18px rgba(4, 180, 196, 0.14);
+  position: fixed;
   top: 0;
-  z-index: 20;
+  left: 0;
+  right: 0;
+  z-index: 50;
 }
 .brand {
   display: flex;
@@ -71,7 +78,7 @@ button, input, select, textarea { font: inherit; }
   padding: 0 !important;
   border-radius: 50% !important;
 }
-.nav-main a:hover { background: #e7f8fa; }
+.nav-main a:hover { background: rgba(255,255,255,.65); }
 .nav-main a.on { background: var(--teal); color: #fff; }
 .nav-user {
   display: flex;
@@ -86,6 +93,7 @@ button, input, select, textarea { font: inherit; }
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--teal);
+  background: #fff;
   display: block;
 }
 
@@ -287,7 +295,7 @@ input, select, textarea {
   border-radius: 10px;
   box-shadow: var(--shadow);
   min-width: 160px;
-  z-index: 30;
+  z-index: 60;
   padding: 6px;
 }
 .menu button {
@@ -330,7 +338,7 @@ input, select, textarea {
 }
 .profile-form { padding: 32px 28px 48px; }
 .profile-visual {
-  background: #0e3d45 center/cover no-repeat;
+  background: #0e3d45 url("../assets/background_info.png") center/cover no-repeat;
   min-height: 280px;
 }
 
