@@ -1,6 +1,5 @@
 import { mountChrome } from "./shell.js";
-import { watchAuth, logout } from "./auth.js";
-import { saveUserProfile } from "./firestore.js";
+import { watchAuth } from "./auth.js";
 import {
   listWeeks,
   seedWeeksIfEmpty,
@@ -15,6 +14,7 @@ import {
 } from "./weeks.js";
 
 const isTeacher = window.NV_ROLE === "teacher";
+const LESSON_IMG = "assets/lesson_image.jpg";
 
 function $(id) {
   return document.getElementById(id);
@@ -28,9 +28,89 @@ function promptBox(msg, def = "") {
   return window.prompt(msg, def);
 }
 
+function normalizeUrl(raw) {
+  let u = String(raw || "").trim();
+  if (!u) return "";
+  if (/^https?:\/\//i.test(u)) return u;
+  return "https://" + u;
+}
+
 let weeks = [];
 let currentId = null;
 let lessons = [];
+let lessonModalMode = "add";
+let lessonModalWeek = null;
+let lessonModalItem = null;
+
+function ensureLessonModal() {
+  if ($"lesson-modal") return;
+  const wrap = document.createElement("div");
+  wrap.id = "lesson-modal";
+  wrap.className = "modal-back hidden";
+  wrap.innerHTML = `
+    <div class="modal">
+      <h2 id="lesson-modal-heading">Thêm bài giảng</h2>
+      <label>Tên bài giảng</label>
+      <input id="lesson-title" placeholder="Ví dụ: Nghị luận xã hội" />
+      <label>Link bài giảng</label>
+      <input id="lesson-url" placeholder="https://docs.google.com/..." />
+      <p class="err" id="lesson-err"></p>
+      <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+        <button class="btn ghost" type="button" id="lesson-cancel">Hủy</button>
+        <button class="btn" type="button" id="lesson-ok">Lưu</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  $("lesson-cancel").addEventListener("click", closeLessonModal);
+  wrap.addEventListener("click", (e) => {
+    if (e.target === wrap) closeLessonModal();
+  });
+  $("lesson-ok").addEventListener("click", submitLessonModal);
+}
+
+function openLessonModal({ mode, week, lesson }) {
+  ensureLessonModal();
+  lessonModalMode = mode;
+  lessonModalWeek = week || null;
+  lessonModalItem = lesson || null;
+  $("lesson-modal-heading").textContent = mode === "edit" ? "Sửa bài giảng" : "Thêm bài giảng";
+  $("lesson-title").value = lesson ? lesson.title : "";
+  $("lesson-url").value = lesson ? lesson.url || lesson.link || "" : "";
+  $("lesson-err").textContent = "";
+  $("lesson-modal").classList.remove("hidden");
+  $("lesson-title").focus();
+}
+
+function closeLessonModal() {
+  const el = $("lesson-modal");
+  if (el) el.classList.add("hidden");
+}
+
+async function submitLessonModal() {
+  const title = $("lesson-title").value.trim();
+  const url = normalizeUrl($("lesson-url").value);
+  const err = $("lesson-err");
+  err.textContent = "";
+  if (!title) {
+    err.textContent = "Nhập tên bài giảng.";
+    return;
+  }
+  if (!url) {
+    err.textContent = "Nhập link bài giảng.";
+    return;
+  }
+  try {
+    if (lessonModalMode === "edit" && lessonModalItem) {
+      await updateLesson(lessonModalItem.id, title, url);
+    } else if (lessonModalWeek) {
+      await addLesson(lessonModalWeek.id, title, url);
+    }
+    closeLessonModal();
+    if (currentId) await selectWeek(currentId);
+  } catch (e) {
+    err.textContent = e.message;
+  }
+}
 
 function renderWeeks() {
   const ul = $("week-list");
@@ -100,22 +180,25 @@ function renderLessons() {
   }
   box.innerHTML = "";
   lessons.forEach((l) => {
-    const wrap = document.createElement("div");
+    const href = normalizeUrl(l.url || l.link || "");
+    const wrap = document.createElement(href ? "a" : "div");
     wrap.className = "lesson-card";
+    if (href) {
+      wrap.href = href;
+      wrap.target = "_blank";
+      wrap.rel = "noopener noreferrer";
+    }
     wrap.innerHTML = `
-      <img src="assets/lesson_image.jpg" alt="" />
+      <img src="${LESSON_IMG}" alt="" />
       <div class="grow">
         <div class="name"></div>
-        <div class="meta">Mở bài giảng</div>
+        <div class="meta">${href ? "Mở bài giảng" : "Chưa có link"}</div>
       </div>
       ${isTeacher ? `<button class="kebab" type="button">⋮</button>` : ""}`;
     wrap.querySelector(".name").textContent = l.title;
-    wrap.addEventListener("click", (e) => {
-      if (e.target.closest(".kebab")) return;
-      if (l.url) window.open(l.url, "_blank", "noopener");
-    });
     if (isTeacher) {
       wrap.querySelector(".kebab").addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         openLessonMenu(e.currentTarget, l);
       });
@@ -162,12 +245,7 @@ function openWeekMenu(anchor, week) {
     menu.remove();
     try {
       if (k === "add") {
-        const title = promptBox("Tên bài giảng");
-        if (!title) return;
-        const url = promptBox("Link bài giảng");
-        if (!url) return;
-        await addLesson(week.id, title, url);
-        if (currentId === week.id) await selectWeek(week.id);
+        openLessonModal({ mode: "add", week });
       }
       if (k === "rename") {
         const title = promptBox("Tên thẻ mới", week.title);
@@ -209,12 +287,7 @@ function openLessonMenu(anchor, lesson) {
     menu.remove();
     try {
       if (k === "edit") {
-        const title = promptBox("Tên bài giảng", lesson.title);
-        if (!title) return;
-        const url = promptBox("Link bài giảng", lesson.url || "");
-        if (url == null) return;
-        await updateLesson(lesson.id, title, url);
-        await selectWeek(currentId);
+        openLessonModal({ mode: "edit", lesson });
       }
       if (k === "del") {
         if (!confirmBox(`Xóa bài “${lesson.title}”?`)) return;
@@ -228,6 +301,7 @@ function openLessonMenu(anchor, lesson) {
 }
 
 async function boot() {
+  ensureLessonModal();
   mountChrome({
     active: "hoc",
     role: isTeacher ? "teacher" : "student",
