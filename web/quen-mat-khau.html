@@ -32,12 +32,9 @@
       </div>
     </section>
   </div>
-  <div id="footer-slot"></div>
   <script type="module">
     import { requestPasswordReset, friendlyAuthError } from "./js/auth.js";
     import { configReady } from "./js/firebase-init.js";
-    import { footerHtml } from "./js/shell.js";
-    document.getElementById("footer-slot").innerHTML = footerHtml();
     const form = document.getElementById("reset-form");
     const err = document.getElementById("reset-error");
     const ok = document.getElementById("reset-ok");

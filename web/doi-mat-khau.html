@@ -34,12 +34,9 @@
       </div>
     </section>
   </div>
-  <div id="footer-slot"></div>
   <script type="module">
     import { changePassword, loadProfile, friendlyAuthError } from "./js/auth.js";
     import { auth, configReady } from "./js/firebase-init.js";
-    import { footerHtml } from "./js/shell.js";
-    document.getElementById("footer-slot").innerHTML = footerHtml();
     const form = document.getElementById("pw-form");
     const err = document.getElementById("pw-error");
     form.addEventListener("submit", async (e) => {
