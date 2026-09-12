@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài giảng · học sinh</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <div class="course-layout">
+    <aside class="week-pane">
+      <h3>Danh sách thẻ</h3>
+      <ul class="week-list" id="week-list"></ul>
+    </aside>
+    <section class="lesson-pane">
+      <h1 id="week-title">Bài giảng</h1>
+      <div class="accent"></div>
+      <div id="lesson-list"></div>
+    </section>
+  </div>
+  <div id="footer-slot"></div>
+  <script>window.NV_ROLE = "student";</script>
+  <script type="module" src="js/bai-giang.js"></script>
+</body>
+</html>

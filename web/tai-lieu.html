@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tài liệu tham khảo</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="page-shell">
+  <div id="header-slot"></div>
+  <main class="wrap"></main>
+  <div id="footer-slot"></div>
+  <script type="module">
+    import { mountChrome } from "./js/shell.js";
+    import { watchAuth } from "./js/auth.js";
+    mountChrome({ active: "tailieu", role: "teacher", who: "" });
+    watchAuth((user, profile) => {
+      const role = profile && profile.role === "student" ? "student" : "teacher";
+      const name = (profile && profile.hoTen) || "";
+      mountChrome({ active: "tailieu", role, who: name });
+    });
+  </script>
+</body>
+</html>

@@ -19,7 +19,6 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
-    // Client không được tạo user / username. Chỉ Admin SDK (Cloud Function).
     match /usernames/{name} {
       allow read: if isTeacher();
       allow write: if false;
@@ -28,13 +27,23 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isSelf(uid) || isTeacher();
       allow create, delete: if false;
-      // HS vừa đổi MK trên Auth được phép tắt cờ trên đúng document của mình.
-      // Không được sửa role / lớp / username từ client.
       allow update: if isSelf(uid)
         && request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(["mustChangePassword", "updatedAt"])
         && request.resource.data.mustChangePassword == false
         && resource.data.mustChangePassword == true;
+      allow update: if isSelf(uid) && passwordOk()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["hoTen", "sdt", "gmail", "lop", "updatedAt"]);
+    }
+
+    match /weeks/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
+    }
+    match /lessons/{id} {
+      allow read: if passwordOk();
+      allow write: if isTeacher();
     }
 
     match /materials/{id} {
