@@ -14,6 +14,11 @@ const iconFace = `
   <path d="M13.2 17v-5h1.6l.3-2h-1.9V8.7c0-.5.2-.9.9-.9H15V6.1S14.4 6 13.6 6c-1.7 0-2.8 1-2.8 2.9V10H9.2v2h1.6v5h2.4z" fill="#fff"/>
 </svg>`;
 
+const iconHome = `
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <path d="M4 11.5L12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+</svg>`;
+
 export function footerHtml() {
   return `
 <footer class="site-footer">
@@ -51,8 +56,10 @@ export function footerHtml() {
 
 export function headerHtml({ active = "home", who = "", role = "teacher" } = {}) {
   const home = role === "student" ? "home-hs.html" : "home.html";
-  const hoc = role === "student" ? "hoc-hs.html" : "hoc.html";
+  const bai = role === "student" ? "bai-giang-hs.html" : "bai-giang.html";
   const luyen = role === "student" ? "luyen-tap-hs.html" : "luyen-tap.html";
+  const hoso = role === "student" ? "hoso-hs.html" : "hoso.html";
+  const avatar = role === "student" ? "assets/default_avatar.jpg" : "assets/default_teacher_avatar.jpg";
   return `
 <header class="site-header">
   <a class="brand" href="${home}">
@@ -63,11 +70,17 @@ export function headerHtml({ active = "home", who = "", role = "teacher" } = {})
     </span>
   </a>
   <nav class="nav-main">
-    <a class="${active === "home" ? "on" : ""}" href="${home}">Trang chủ</a>
-    <a class="${active === "hoc" ? "on" : ""}" href="${hoc}">Học</a>
+    <a class="nav-pill-home ${active === "home" ? "on" : ""}" href="${home}" title="Trang chủ">${iconHome}</a>
+    <a class="${active === "hoc" ? "on" : ""}" href="${bai}">Bài giảng</a>
     <a class="${active === "luyen" ? "on" : ""}" href="${luyen}">Luyện tập</a>
+    <a class="${active === "tailieu" ? "on" : ""}" href="tai-lieu.html">Tài liệu tham khảo</a>
   </nav>
-  <div class="who">${who}</div>
+  <div class="nav-user">
+    <span class="nav-name">${who || ""}</span>
+    <a href="${hoso}" title="Thông tin cá nhân">
+      <img class="nav-avatar" src="${avatar}" alt="Avatar" />
+    </a>
+  </div>
 </header>`;
 }
 
