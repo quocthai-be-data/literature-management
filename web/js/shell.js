@@ -15,7 +15,7 @@ const iconFace = `
 </svg>`;
 
 const iconHome = `
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
   <path d="M4 11.5L12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
 </svg>`;
 

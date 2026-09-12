@@ -35,7 +35,16 @@
   <div id="footer-slot"></div>
   <script type="module">
     import { mountChrome } from "./js/shell.js";
+    import { watchAuth } from "./js/auth.js";
     mountChrome({ active: "luyen", role: "student", who: "Học sinh" });
+    watchAuth((user, profile) => {
+      if (!user) return;
+      mountChrome({
+        active: "luyen",
+        role: "student",
+        who: (profile && profile.hoTen) || user.email || "Học sinh",
+      });
+    });
   </script>
 </body>
 </html>
