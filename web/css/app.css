@@ -177,8 +177,8 @@ a.fn-box { text-decoration: none; color: inherit; display: block; }
   border-radius: 999px;
   background: var(--lime-pale);
   color: var(--ink);
-  font-size: 13px;
   text-decoration: none;
+  font-size: 13px;
 }
 .chip.on { background: var(--teal); color: #fff; }
 
@@ -243,7 +243,7 @@ input, select, textarea {
   flex: 1;
   display: grid;
   grid-template-columns: 6fr 4fr;
-  min-height: 0;
+  min-height: 100vh;
 }
 .login-visual {
   background: #0e3d45 center/cover no-repeat;
@@ -404,3 +404,25 @@ table.data th, table.data td { text-align: left; padding: 8px 6px; border-bottom
 }
 .modal h2 { margin-bottom: 8px; }
 .modal.hidden, .modal-back.hidden { display: none; }
+
+/* Home học sinh — full-bleed image */
+.home-hero {
+  min-height: calc(100vh - var(--header-h));
+  width: 100%;
+  overflow: hidden;
+  background: #0e3d45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.home-hero img {
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+.page-shell > .home-hero {
+  min-height: calc(100vh - var(--header-h));
+}
