@@ -33,7 +33,7 @@ function normalizeUrl(raw) {
   return "https://" + u;
 }
 
-let isTeacher = false;
+let isTeacher = true;
 let folders = [];
 let currentId = null;
 let items = [];
@@ -174,7 +174,7 @@ async function selectFolder(id) {
 function renderItems() {
   const box = $("item-list");
   if (!items.length) {
-    box.innerHTML = `<p class="sub">Chưa có tài liệu trong thẻ này.</p>`;
+    box.innerHTML = `<p class="sub">Chưa có tài liệu</p>`;
     return;
   }
   box.innerHTML = "";
@@ -263,7 +263,7 @@ function openFolderMenu(anchor, folder) {
           if (currentId) await selectFolder(currentId);
           else {
             $("folder-title").textContent = "Tài liệu tham khảo";
-            $("item-list").innerHTML = `<p class="sub">Chưa có thẻ. GV bấm Thêm thẻ để tạo.</p>`;
+            $("item-list").innerHTML = `<p class="sub">Chưa có tài liệu</p>`;
             renderFolders();
           }
         } else renderFolders();
@@ -313,9 +313,7 @@ async function loadFolders() {
     else {
       currentId = null;
       $("folder-title").textContent = "Tài liệu tham khảo";
-      $("item-list").innerHTML = isTeacher
-        ? `<p class="sub">Chưa có thẻ. Bấm <strong>Thêm thẻ</strong> để tạo danh mục tài liệu.</p>`
-        : `<p class="sub">Cô chưa đăng tài liệu tham khảo.</p>`;
+      $("item-list").innerHTML = `<p class="sub">Chưa có tài liệu</p>`;
       renderFolders();
     }
   } catch (err) {
@@ -325,6 +323,7 @@ async function loadFolders() {
 
 async function boot() {
   ensureItemModal();
+  setTeacherUI(true);
   mountChrome({ active: "tailieu", role: "teacher", who: "" });
 
   $("btn-add-folder")?.addEventListener("click", async () => {
