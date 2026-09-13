@@ -36,7 +36,7 @@ let items = [];
 let itemModalMode = "add";
 let itemModalFolder = null;
 let itemModalItem = null;
-let cardModalMode = "add"; // add folder(+optional item) | rename
+let cardModalMode = "add";
 let cardModalFolder = null;
 
 function ensureItemModal() {
@@ -73,10 +73,8 @@ function ensureCardModal() {
   wrap.innerHTML = `
     <div class="modal">
       <h2 id="card-modal-heading">Thêm thẻ</h2>
-      <label id="card-title-label">Tên tài liệu tham khảo</label>
+      <label>Tên thẻ</label>
       <input id="card-title" placeholder="Ví dụ: Ngữ liệu ngoài SGK" />
-      <label id="card-url-label">Link tài liệu tham khảo</label>
-      <input id="card-url" placeholder="https://docs.google.com/... (có thể để trống)" />
       <p class="err" id="card-err"></p>
       <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
         <button class="btn ghost" type="button" id="card-cancel">Hủy</button>
@@ -97,18 +95,10 @@ function openCardModal({ mode, folder } = { mode: "add" }) {
   cardModalFolder = folder || null;
   if (cardModalMode === "rename") {
     $("card-modal-heading").textContent = "Đổi tên thẻ";
-    $("card-title-label").textContent = "Tên thẻ";
     $("card-title").value = folder ? folder.title : "";
-    $("card-url-label").style.display = "none";
-    $("card-url").style.display = "none";
-    $("card-url").value = "";
   } else {
     $("card-modal-heading").textContent = "Thêm thẻ";
-    $("card-title-label").textContent = "Tên tài liệu tham khảo";
-    $("card-url-label").style.display = "";
-    $("card-url").style.display = "";
     $("card-title").value = "";
-    $("card-url").value = "";
   }
   $("card-err").textContent = "";
   $("card-modal").classList.remove("hidden");
@@ -122,11 +112,10 @@ function closeCardModal() {
 
 async function submitCardModal() {
   const title = $("card-title").value.trim();
-  const url = normalizeUrl($("card-url").value);
   const err = $("card-err");
   err.textContent = "";
   if (!title) {
-    err.textContent = "Nhập tên tài liệu tham khảo.";
+    err.textContent = "Nhập tên thẻ.";
     return;
   }
   try {
@@ -140,9 +129,6 @@ async function submitCardModal() {
     }
     const f = await addMaterialFolder(title);
     folders.push(f);
-    if (url) {
-      await addMaterialItem(f.id, title, url);
-    }
     closeCardModal();
     renderFolders();
     await selectFolder(f.id);
