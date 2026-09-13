@@ -22,10 +22,6 @@ function confirmBox(msg) {
   return window.confirm(msg);
 }
 
-function promptBox(msg, def = "") {
-  return window.prompt(msg, def);
-}
-
 function normalizeUrl(raw) {
   let u = String(raw || "").trim();
   if (!u) return "";
@@ -40,6 +36,8 @@ let items = [];
 let itemModalMode = "add";
 let itemModalFolder = null;
 let itemModalItem = null;
+let cardModalMode = "add"; // add folder(+optional item) | rename
+let cardModalFolder = null;
 
 function ensureItemModal() {
   if ($("mat-modal")) return;
@@ -49,9 +47,9 @@ function ensureItemModal() {
   wrap.innerHTML = `
     <div class="modal">
       <h2 id="mat-modal-heading">Thêm tài liệu</h2>
-      <label>Tên tài liệu</label>
+      <label>Tên tài liệu tham khảo</label>
       <input id="mat-title" placeholder="Ví dụ: Ngữ liệu nghị luận ngoài SGK" />
-      <label>Link tài liệu</label>
+      <label>Link tài liệu tham khảo</label>
       <input id="mat-url" placeholder="https://docs.google.com/..." />
       <p class="err" id="mat-err"></p>
       <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
@@ -65,6 +63,92 @@ function ensureItemModal() {
     if (e.target === wrap) closeItemModal();
   });
   $("mat-ok").addEventListener("click", submitItemModal);
+}
+
+function ensureCardModal() {
+  if ($("card-modal")) return;
+  const wrap = document.createElement("div");
+  wrap.id = "card-modal";
+  wrap.className = "modal-back hidden";
+  wrap.innerHTML = `
+    <div class="modal">
+      <h2 id="card-modal-heading">Thêm thẻ</h2>
+      <label id="card-title-label">Tên tài liệu tham khảo</label>
+      <input id="card-title" placeholder="Ví dụ: Ngữ liệu ngoài SGK" />
+      <label id="card-url-label">Link tài liệu tham khảo</label>
+      <input id="card-url" placeholder="https://docs.google.com/... (có thể để trống)" />
+      <p class="err" id="card-err"></p>
+      <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+        <button class="btn ghost" type="button" id="card-cancel">Hủy</button>
+        <button class="btn" type="button" id="card-ok">Lưu</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  $("card-cancel").addEventListener("click", closeCardModal);
+  wrap.addEventListener("click", (e) => {
+    if (e.target === wrap) closeCardModal();
+  });
+  $("card-ok").addEventListener("click", submitCardModal);
+}
+
+function openCardModal({ mode, folder } = { mode: "add" }) {
+  ensureCardModal();
+  cardModalMode = mode || "add";
+  cardModalFolder = folder || null;
+  if (cardModalMode === "rename") {
+    $("card-modal-heading").textContent = "Đổi tên thẻ";
+    $("card-title-label").textContent = "Tên thẻ";
+    $("card-title").value = folder ? folder.title : "";
+    $("card-url-label").style.display = "none";
+    $("card-url").style.display = "none";
+    $("card-url").value = "";
+  } else {
+    $("card-modal-heading").textContent = "Thêm thẻ";
+    $("card-title-label").textContent = "Tên tài liệu tham khảo";
+    $("card-url-label").style.display = "";
+    $("card-url").style.display = "";
+    $("card-title").value = "";
+    $("card-url").value = "";
+  }
+  $("card-err").textContent = "";
+  $("card-modal").classList.remove("hidden");
+  $("card-title").focus();
+}
+
+function closeCardModal() {
+  const el = $("card-modal");
+  if (el) el.classList.add("hidden");
+}
+
+async function submitCardModal() {
+  const title = $("card-title").value.trim();
+  const url = normalizeUrl($("card-url").value);
+  const err = $("card-err");
+  err.textContent = "";
+  if (!title) {
+    err.textContent = "Nhập tên tài liệu tham khảo.";
+    return;
+  }
+  try {
+    if (cardModalMode === "rename" && cardModalFolder) {
+      await renameMaterialFolder(cardModalFolder.id, title);
+      cardModalFolder.title = title;
+      renderFolders();
+      if (currentId === cardModalFolder.id) $("folder-title").textContent = title;
+      closeCardModal();
+      return;
+    }
+    const f = await addMaterialFolder(title);
+    folders.push(f);
+    if (url) {
+      await addMaterialItem(f.id, title, url);
+    }
+    closeCardModal();
+    renderFolders();
+    await selectFolder(f.id);
+  } catch (e) {
+    err.textContent = e.message;
+  }
 }
 
 function openItemModal({ mode, folder, item }) {
@@ -247,12 +331,7 @@ function openFolderMenu(anchor, folder) {
         openItemModal({ mode: "add", folder });
       }
       if (k === "rename") {
-        const title = promptBox("Tên thẻ mới", folder.title);
-        if (!title) return;
-        await renameMaterialFolder(folder.id, title);
-        folder.title = title.trim();
-        renderFolders();
-        if (currentId === folder.id) $("folder-title").textContent = folder.title;
+        openCardModal({ mode: "rename", folder });
       }
       if (k === "del") {
         if (!confirmBox(`Xóa thẻ “${folder.title}” và toàn bộ tài liệu trong thẻ?`)) return;
@@ -323,21 +402,13 @@ async function loadFolders() {
 
 async function boot() {
   ensureItemModal();
+  ensureCardModal();
   setTeacherUI(true);
   mountChrome({ active: "tailieu", role: "teacher", who: "" });
 
-  $("btn-add-folder")?.addEventListener("click", async () => {
+  $("btn-add-folder")?.addEventListener("click", () => {
     if (!isTeacher) return;
-    const title = promptBox("Tên thẻ mới");
-    if (!title) return;
-    try {
-      const f = await addMaterialFolder(title);
-      folders.push(f);
-      renderFolders();
-      await selectFolder(f.id);
-    } catch (err) {
-      alert(err.message);
-    }
+    openCardModal({ mode: "add" });
   });
 
   watchAuth(async (user, profile) => {
