@@ -41,6 +41,8 @@ let lessons = [];
 let lessonModalMode = "add";
 let lessonModalWeek = null;
 let lessonModalItem = null;
+let folderModalMode = "add"; // add | rename
+let folderModalWeek = null;
 
 function ensureLessonModal() {
   if ($("lesson-modal")) return;
@@ -66,6 +68,94 @@ function ensureLessonModal() {
     if (e.target === wrap) closeLessonModal();
   });
   $("lesson-ok").addEventListener("click", submitLessonModal);
+}
+
+function ensureFolderModal() {
+  if ($("folder-modal")) return;
+  const wrap = document.createElement("div");
+  wrap.id = "folder-modal";
+  wrap.className = "modal-back hidden";
+  wrap.innerHTML = `
+    <div class="modal">
+      <h2 id="folder-modal-heading">Thêm thẻ</h2>
+      <label>Tên bài giảng</label>
+      <input id="folder-title" placeholder="Ví dụ: Tuần 5 / Nghị luận xã hội" />
+      <label>Link bài giảng</label>
+      <input id="folder-url" placeholder="https://docs.google.com/... (có thể để trống)" />
+      <p class="err" id="folder-err"></p>
+      <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+        <button class="btn ghost" type="button" id="folder-cancel">Hủy</button>
+        <button class="btn" type="button" id="folder-ok">Lưu</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  $("folder-cancel").addEventListener("click", closeFolderModal);
+  wrap.addEventListener("click", (e) => {
+    if (e.target === wrap) closeFolderModal();
+  });
+  $("folder-ok").addEventListener("click", submitFolderModal);
+}
+
+function openFolderModal({ mode, week } = { mode: "add" }) {
+  ensureFolderModal();
+  folderModalMode = mode || "add";
+  folderModalWeek = week || null;
+  if (folderModalMode === "rename" && week) {
+    $("folder-modal-heading").textContent = "Đổi tên thẻ";
+    $("folder-title").value = week.title || "";
+    $("folder-url").value = "";
+    $("folder-url").closest("label")?.classList.add("hidden");
+    // hide url field on rename
+    const urlInput = $("folder-url");
+    urlInput.style.display = "none";
+    if (urlInput.previousElementSibling) urlInput.previousElementSibling.style.display = "none";
+  } else {
+    $("folder-modal-heading").textContent = "Thêm thẻ";
+    $("folder-title").value = "";
+    $("folder-url").value = "";
+    const urlInput = $("folder-url");
+    urlInput.style.display = "";
+    if (urlInput.previousElementSibling) urlInput.previousElementSibling.style.display = "";
+  }
+  $("folder-err").textContent = "";
+  $("folder-modal").classList.remove("hidden");
+  $("folder-title").focus();
+}
+
+function closeFolderModal() {
+  const el = $("folder-modal");
+  if (el) el.classList.add("hidden");
+}
+
+async function submitFolderModal() {
+  const title = $("folder-title").value.trim();
+  const url = normalizeUrl($("folder-url").value);
+  const err = $("folder-err");
+  err.textContent = "";
+  if (!title) {
+    err.textContent = "Nhập tên bài giảng.";
+    return;
+  }
+  try {
+    if (folderModalMode === "rename" && folderModalWeek) {
+      await renameWeek(folderModalWeek.id, title);
+      folderModalWeek.title = title;
+      renderWeeks();
+      if (currentId === folderModalWeek.id) $("week-title").textContent = title;
+      closeFolderModal();
+      return;
+    }
+    const w = await addWeek(title);
+    weeks.push(w);
+    if (url) {
+      await addLesson(w.id, title, url);
+    }
+    closeFolderModal();
+    renderWeeks();
+    await selectWeek(w.id);
+  } catch (e) {
+    err.textContent = e.message;
+  }
 }
 
 function openLessonModal({ mode, week, lesson }) {
@@ -235,7 +325,7 @@ function placeMenu(anchor, html) {
 function openWeekMenu(anchor, week) {
   const menu = placeMenu(
     anchor,
-    `<button type="button" data-k="add">Thêm tài liệu</button>
+    `<button type="button" data-k="add">Thêm bài giảng</button>
      <button type="button" data-k="rename">Đổi tên</button>
      <button type="button" data-k="del">Xóa thẻ</button>`
   );
@@ -248,12 +338,7 @@ function openWeekMenu(anchor, week) {
         openLessonModal({ mode: "add", week });
       }
       if (k === "rename") {
-        const title = promptBox("Tên thẻ mới", week.title);
-        if (!title) return;
-        await renameWeek(week.id, title);
-        week.title = title.trim();
-        renderWeeks();
-        if (currentId === week.id) $("week-title").textContent = week.title;
+        openFolderModal({ mode: "rename", week });
       }
       if (k === "del") {
         if (!confirmBox(`Xóa thẻ “${week.title}” và toàn bộ bài giảng trong thẻ?`)) return;
@@ -302,6 +387,7 @@ function openLessonMenu(anchor, lesson) {
 
 async function boot() {
   ensureLessonModal();
+  ensureFolderModal();
   mountChrome({
     active: "hoc",
     role: isTeacher ? "teacher" : "student",
@@ -317,17 +403,8 @@ async function boot() {
     });
   });
 
-  $("btn-add-week")?.addEventListener("click", async () => {
-    const title = promptBox("Tên thẻ mới");
-    if (!title) return;
-    try {
-      const w = await addWeek(title);
-      weeks.push(w);
-      renderWeeks();
-      await selectWeek(w.id);
-    } catch (err) {
-      alert(err.message);
-    }
+  $("btn-add-week")?.addEventListener("click", () => {
+    openFolderModal({ mode: "add" });
   });
 
   try {
@@ -336,7 +413,7 @@ async function boot() {
     if (weeks[0]) await selectWeek(weeks[0].id);
     else {
       $("week-title").textContent = "Chưa có thẻ";
-      $("lesson-list").innerHTML = `<p class="sub">Cô chưa tạo tuần / thẻ bài giảng.</p>`;
+      $("lesson-list").innerHTML = `<p class="sub">Chưa có bài giảng</p>`;
     }
   } catch (err) {
     $("lesson-list").innerHTML = `<p class="sub">${err.message}</p>`;
