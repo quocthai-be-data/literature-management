@@ -41,7 +41,7 @@ let lessons = [];
 let lessonModalMode = "add";
 let lessonModalWeek = null;
 let lessonModalItem = null;
-let folderModalMode = "add"; // add | rename
+let folderModalMode = "add";
 let folderModalWeek = null;
 
 function ensureLessonModal() {
@@ -78,10 +78,8 @@ function ensureFolderModal() {
   wrap.innerHTML = `
     <div class="modal">
       <h2 id="folder-modal-heading">Thêm thẻ</h2>
-      <label>Tên bài giảng</label>
+      <label>Tên thẻ</label>
       <input id="folder-title" placeholder="Ví dụ: Tuần 5 / Nghị luận xã hội" />
-      <label>Link bài giảng</label>
-      <input id="folder-url" placeholder="https://docs.google.com/... (có thể để trống)" />
       <p class="err" id="folder-err"></p>
       <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
         <button class="btn ghost" type="button" id="folder-cancel">Hủy</button>
@@ -103,19 +101,9 @@ function openFolderModal({ mode, week } = { mode: "add" }) {
   if (folderModalMode === "rename" && week) {
     $("folder-modal-heading").textContent = "Đổi tên thẻ";
     $("folder-title").value = week.title || "";
-    $("folder-url").value = "";
-    $("folder-url").closest("label")?.classList.add("hidden");
-    // hide url field on rename
-    const urlInput = $("folder-url");
-    urlInput.style.display = "none";
-    if (urlInput.previousElementSibling) urlInput.previousElementSibling.style.display = "none";
   } else {
     $("folder-modal-heading").textContent = "Thêm thẻ";
     $("folder-title").value = "";
-    $("folder-url").value = "";
-    const urlInput = $("folder-url");
-    urlInput.style.display = "";
-    if (urlInput.previousElementSibling) urlInput.previousElementSibling.style.display = "";
   }
   $("folder-err").textContent = "";
   $("folder-modal").classList.remove("hidden");
@@ -129,11 +117,10 @@ function closeFolderModal() {
 
 async function submitFolderModal() {
   const title = $("folder-title").value.trim();
-  const url = normalizeUrl($("folder-url").value);
   const err = $("folder-err");
   err.textContent = "";
   if (!title) {
-    err.textContent = "Nhập tên bài giảng.";
+    err.textContent = "Nhập tên thẻ.";
     return;
   }
   try {
@@ -147,9 +134,6 @@ async function submitFolderModal() {
     }
     const w = await addWeek(title);
     weeks.push(w);
-    if (url) {
-      await addLesson(w.id, title, url);
-    }
     closeFolderModal();
     renderWeeks();
     await selectWeek(w.id);
