@@ -87,6 +87,9 @@ service cloud.firestore {
       );
       allow write: if isTeacher();
     }
+    match /teacherNotes/{uid} {
+      allow read, write: if isTeacher() && request.auth.uid == uid;
+    }
 
     match /{document=**} {
       allow read, write: if false;

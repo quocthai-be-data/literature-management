@@ -103,12 +103,14 @@ export async function listItems(folderId) {
   return rows;
 }
 
-export async function addItem({ folderId, title, url, deadline = null }) {
+export async function addItem({ folderId, title, url, deadline = null, type = "content", sourceItemId = null }) {
   const payload = {
     folderId,
     title: title.trim(),
     url: url.trim(),
     deadline: deadline || null,
+    type,
+    sourceItemId,
     createdAt: serverTimestamp(),
   };
   const ref = await addDoc(collection(needDb(), "practiceItems"), payload);

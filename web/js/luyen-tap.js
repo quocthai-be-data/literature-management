@@ -17,6 +17,7 @@ import {
 const isTeacher = window.NV_ROLE === "teacher";
 const IMG_DE = "assets/image_de.jpg";
 const IMG_BT = "assets/image_baitap.jpg";
+const IMG_SUBMISSION = "assets/image_baitap.jpg";
 
 function $(id) {
   return document.getElementById(id);
@@ -111,6 +112,7 @@ let itemModalMode = "add";
 let itemModalFolder = null;
 let itemModalItem = null;
 let itemModalBaitap = false;
+let itemModalSubmissionFor = null;
 let cardModalMode = "add";
 let cardModalFolder = null;
 
@@ -228,13 +230,16 @@ async function submitCardModal() {
   }
 }
 
-function openItemModal({ mode, folder, item, baitap }) {
+function openItemModal({ mode, folder, item, baitap, submissionFor = null }) {
   ensureItemModal();
   itemModalMode = mode;
   itemModalFolder = folder || null;
   itemModalItem = item || null;
   itemModalBaitap = !!baitap;
-  const heading =
+  itemModalSubmissionFor = submissionFor;
+  const heading = submissionFor
+    ? "Thêm link nộp bài"
+    :
     mode === "edit"
       ? baitap
         ? "Sửa bài tập"
@@ -243,14 +248,15 @@ function openItemModal({ mode, folder, item, baitap }) {
         ? "Thêm bài tập"
         : "Thêm tài liệu";
   $("item-modal-heading").textContent = heading;
-  $("item-title-label").textContent = baitap ? "Tên bài tập" : "Tên bài tập / đề";
-  $("item-url-label").textContent = baitap ? "Link bài tập" : "Link bài tập / đề";
-  $("item-title").value = item ? item.title : "";
+  $("item-title-label").textContent = submissionFor ? "Tên thẻ" : baitap ? "Tên bài tập" : "Tên bài tập / đề";
+  $("item-url-label").textContent = submissionFor ? "Link nộp bài" : baitap ? "Link bài tập" : "Link bài tập / đề";
+  $("item-title").value = submissionFor ? `Link nộp bài ${submissionFor.title}` : item ? item.title : "";
+  $("item-title").disabled = !!submissionFor;
   $("item-url").value = item ? item.url || "" : "";
   $("item-err").textContent = "";
   // Deadline cho mọi loại thẻ (Đọc-hiểu, NLXH, NLVH, Đề các năm, Bài tập)
   const dlWrap = $("item-deadline-wrap");
-  dlWrap.classList.remove("hidden");
+  dlWrap.classList.toggle("hidden", !!submissionFor);
   $("item-deadline").value = item ? deadlineToInput(item.deadline) : "";
   $("item-modal").classList.remove("hidden");
   $("item-title").focus();
@@ -259,10 +265,13 @@ function openItemModal({ mode, folder, item, baitap }) {
 function closeItemModal() {
   const el = $("item-modal");
   if (el) el.classList.add("hidden");
+  $("item-title").disabled = false;
 }
 
 async function submitItemModal() {
-  const title = $("item-title").value.trim();
+  const title = itemModalSubmissionFor
+    ? `Link nộp bài ${itemModalSubmissionFor.title}`
+    : $("item-title").value.trim();
   const url = normalizeUrl($("item-url").value);
   const err = $("item-err");
   err.textContent = "";
@@ -274,9 +283,9 @@ async function submitItemModal() {
     err.textContent = itemModalBaitap ? "Nhập link bài tập." : "Nhập link.";
     return;
   }
-  let deadline = null;
+  let deadline = itemModalSubmissionFor ? itemModalSubmissionFor.deadline || null : null;
   const rawDl = $("item-deadline").value;
-  if (itemModalBaitap) {
+  if (!itemModalSubmissionFor && itemModalBaitap) {
     if (!rawDl) {
       err.textContent = "Chọn thời hạn nộp.";
       return;
@@ -286,7 +295,7 @@ async function submitItemModal() {
       err.textContent = "Thời hạn không hợp lệ.";
       return;
     }
-  } else if (rawDl) {
+  } else if (!itemModalSubmissionFor && rawDl) {
     deadline = parseDeadlineInput(rawDl);
     if (!deadline) {
       err.textContent = "Thời hạn không hợp lệ.";
@@ -297,7 +306,14 @@ async function submitItemModal() {
     if (itemModalMode === "edit" && itemModalItem) {
       await updateItem(itemModalItem.id, { title, url, deadline });
     } else if (itemModalFolder) {
-      await addItem({ folderId: itemModalFolder.id, title, url, deadline });
+      await addItem({
+        folderId: itemModalFolder.id,
+        title,
+        url,
+        deadline,
+        type: itemModalSubmissionFor ? "submission" : "content",
+        sourceItemId: itemModalSubmissionFor ? itemModalSubmissionFor.id : null,
+      });
     }
     closeItemModal();
     if (currentId) await selectFolder(currentId);
@@ -414,13 +430,14 @@ function renderItems() {
   const box = $("item-list");
   const folder = folders.find((f) => f.id === currentId);
   const kind = folderKind(folder, folders);
-  const img = kind === "baitap" ? IMG_BT : IMG_DE;
   if (!items.length) {
     box.innerHTML = `<p class="sub">Chưa có ${kind === "baitap" ? "bài tập" : "tài liệu"} trong thẻ này.</p>`;
     return;
   }
   box.innerHTML = "";
   items.forEach((it) => {
+    const isSubmission = it.type === "submission";
+    const img = isSubmission ? IMG_SUBMISSION : kind === "baitap" ? IMG_BT : IMG_DE;
     const href = normalizeUrl(it.url || it.link || "");
     const hasDeadline = !!(it.deadline);
     const overdue = hasDeadline && isOverdue(it.deadline);
@@ -444,7 +461,7 @@ function renderItems() {
       <img src="${img}" alt="" />
       <div class="grow">
         <div class="name"></div>
-        <div class="meta">${href ? (kind === "baitap" || hasDeadline ? "Mở bài tập" : "Mở đề") : "Chưa có link"}</div>
+        <div class="meta">${href ? (isSubmission ? "Mở link nộp bài" : kind === "baitap" || hasDeadline ? "Mở bài tập" : "Mở đề") : "Chưa có link"}</div>
       </div>
       ${dlText ? `<span class="deadline${overdue ? " over" : ""}">${dlText}</span>` : ""}
       ${isTeacher ? `<button class="kebab" type="button">⋮</button>` : ""}`;
@@ -557,9 +574,11 @@ function openFolderMenu(anchor, folder, isRoot) {
 }
 
 function openItemMenu(anchor, item, baitap) {
+  const canAddSubmission = item.type !== "submission";
   const menu = placeMenu(
     anchor,
-    `<button type="button" data-k="edit">Sửa</button>
+    `${canAddSubmission ? '<button type="button" data-k="submission">Thêm link nộp bài</button>' : ""}
+     <button type="button" data-k="edit">Sửa</button>
      <button type="button" data-k="del">Xóa</button>`
   );
   menu.addEventListener("click", async (e) => {
@@ -570,6 +589,10 @@ function openItemMenu(anchor, item, baitap) {
       if (k === "edit") {
         const folder = folders.find((f) => f.id === currentId);
         openItemModal({ mode: "edit", folder, item, baitap });
+      }
+      if (k === "submission") {
+        const folder = folders.find((f) => f.id === currentId);
+        openItemModal({ mode: "add", folder, item: null, baitap: false, submissionFor: item });
       }
       if (k === "del") {
         if (!confirmBox(`Xóa “${item.title}”?`)) return;
