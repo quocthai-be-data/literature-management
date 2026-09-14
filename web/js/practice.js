@@ -151,6 +151,9 @@ export function folderKind(folder, allFolders) {
   while (cur && cur.parentId) {
     cur = byId[cur.parentId];
   }
-  if (cur && (cur.kind === "baitap" || cur.seedKey === "bai-tap")) return "baitap";
+  if (!cur) return "de";
+  if (cur.kind === "baitap" || cur.seedKey === "bai-tap") return "baitap";
+  // fallback: title "Bài tập" (khi GV tạo lại thẻ gốc không có kind)
+  if (/bài\s*tập/i.test(String(cur.title || ""))) return "baitap";
   return "de";
 }
