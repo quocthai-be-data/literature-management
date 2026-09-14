@@ -335,10 +335,15 @@ table.data th, table.data td { text-align: left; padding: 8px 6px; border-bottom
 .week-item.child { margin-left: 14px; background: #fbfefe; }
 .week-item.dragging { opacity: .5; }
 .lesson-card .deadline {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--muted);
   white-space: nowrap;
   margin-right: 4px;
+  flex: 0 0 auto;
+  max-width: 48%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .lesson-card .deadline.over {
   color: var(--danger);
