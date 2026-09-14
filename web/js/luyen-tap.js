@@ -248,14 +248,10 @@ function openItemModal({ mode, folder, item, baitap }) {
   $("item-title").value = item ? item.title : "";
   $("item-url").value = item ? item.url || "" : "";
   $("item-err").textContent = "";
+  // Deadline cho mọi loại thẻ (Đọc-hiểu, NLXH, NLVH, Đề các năm, Bài tập)
   const dlWrap = $("item-deadline-wrap");
-  if (baitap) {
-    dlWrap.classList.remove("hidden");
-    $("item-deadline").value = item ? deadlineToInput(item.deadline) : "";
-  } else {
-    dlWrap.classList.add("hidden");
-    $("item-deadline").value = "";
-  }
+  dlWrap.classList.remove("hidden");
+  $("item-deadline").value = item ? deadlineToInput(item.deadline) : "";
   $("item-modal").classList.remove("hidden");
   $("item-title").focus();
 }
@@ -279,13 +275,19 @@ async function submitItemModal() {
     return;
   }
   let deadline = null;
+  const rawDl = $("item-deadline").value;
   if (itemModalBaitap) {
-    const raw = $("item-deadline").value;
-    if (!raw) {
+    if (!rawDl) {
       err.textContent = "Chọn thời hạn nộp.";
       return;
     }
-    deadline = parseDeadlineInput(raw);
+    deadline = parseDeadlineInput(rawDl);
+    if (!deadline) {
+      err.textContent = "Thời hạn không hợp lệ.";
+      return;
+    }
+  } else if (rawDl) {
+    deadline = parseDeadlineInput(rawDl);
     if (!deadline) {
       err.textContent = "Thời hạn không hợp lệ.";
       return;
@@ -426,8 +428,8 @@ function renderItems() {
     const dlText =
       hasDeadline && dlLabel
         ? overdue
-          ? `Hết hạn ${dlLabel}`
-          : `Hạn ${dlLabel}`
+          ? `Deadline hết hạn ${dlLabel}`
+          : `Deadline ${dlLabel}`
         : "";
 
     const blocked = !isTeacher && overdue;
