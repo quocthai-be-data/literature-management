@@ -38,7 +38,13 @@
           <label>Tên đăng nhập</label>
           <input name="identifier" required placeholder="HS: nvan345624  ·  GV: email nhà trường" />
           <label>Mật khẩu</label>
-          <input name="password" type="password" required placeholder="Mật khẩu mặc định hoặc đã đổi" />
+          <div class="password-field">
+            <input id="login-password" name="password" type="password" required placeholder="Mật khẩu mặc định hoặc đã đổi" />
+            <button class="password-toggle" type="button" aria-controls="login-password" aria-pressed="false" aria-label="Hiện mật khẩu" title="Hiện mật khẩu">
+              <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+              <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6c1.9 0 3.5.6 4.9 1.5M21.5 12s-3.5 6-9.5 6c-1.9 0-3.5-.6-4.9-1.5"/><path d="m3 3 18 18"/></svg>
+            </button>
+          </div>
           <p class="err" id="login-error"></p>
           <button class="btn" type="submit" style="width:100%;margin-top:8px">Đăng nhập</button>
           <p class="sub" style="margin-top:14px">

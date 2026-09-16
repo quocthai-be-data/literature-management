@@ -4,6 +4,16 @@ import { configReady } from "./firebase-init.js";
 const form = document.getElementById("login-form");
 const err = document.getElementById("login-error");
 const note = document.getElementById("config-note");
+const passwordInput = document.getElementById("login-password");
+const passwordToggle = document.querySelector(".password-toggle");
+
+passwordToggle?.addEventListener("click", () => {
+  const showing = passwordInput.type === "text";
+  passwordInput.type = showing ? "password" : "text";
+  passwordToggle.setAttribute("aria-pressed", String(!showing));
+  passwordToggle.setAttribute("aria-label", showing ? "Hiện mật khẩu" : "Ẩn mật khẩu");
+  passwordToggle.title = showing ? "Hiện mật khẩu" : "Ẩn mật khẩu";
+});
 
 if (!configReady && note) {
   note.hidden = false;
