@@ -2,5 +2,25 @@
 <html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="assets/web_icon.jpg" type="image/jpeg"><title>Trang chủ học sinh</title><link rel="stylesheet" href="css/app.css"></head>
 <body class="page-shell student-home-page"><div id="header-slot"></div><main class="teacher-dashboard wrap">
 <section class="dashboard-top"><article class="school-week card calendar-card"><div class="section-label">Lịch học tập</div><div class="calendar-heading"><div id="calendar-heading" aria-live="polite"></div><div class="calendar-navigation"><button class="calendar-nav" id="calendar-prev" type="button" aria-label="Tháng trước">&lsaquo;</button><button class="calendar-nav" id="calendar-next" type="button" aria-label="Tháng sau">&rsaquo;</button></div></div><p class="calendar-help">Nhấp chuột phải vào ngày để thêm ghi chú.</p><div class="mini-calendar" id="mini-calendar"></div></article><section class="grading-overview card"><div class="panel-heading"><div><div class="section-label">Theo dõi học tập</div><h1>Bảng bài tập</h1></div><button class="btn" id="open-assignments" type="button">Mở bảng bài tập</button></div><div class="grading-cards"><button class="grading-stat pending" data-status="open"><span>Chưa hoàn thành</span><b id="open-count">0</b><small>Bài tập đang cần thực hiện</small></button><button class="grading-stat done" data-status="completed"><span>Đã hoàn thành</span><b id="completed-count">0</b><small>Đã tick hoặc đã hết hạn</small></button></div></section></section>
-<section class="dashboard-notes card"><div class="note-tabs"><button class="note-tab on" data-note-tab="note">Ghi chú</button><button class="note-tab" data-note-tab="todo">Todo list</button></div><div id="note-panel"><textarea id="student-note" class="note-surface" placeholder="Ghi chú của học sinh"></textarea><p class="save-state" id="note-state"></p></div><div id="todo-panel" class="hidden"><div class="note-surface todo-surface"><div id="todo-list" class="todo-list"></div><div class="todo-actions"><button id="add-todo" class="add-todo" type="button">+</button><button id="delete-todo" class="delete-todo" type="button">−</button></div></div></div></section></main>
+<section class="dashboard-notes">
+<article class="card notes-block">
+  <div class="notes-block-header">Ghi chú</div>
+  <div id="note-panel">
+    <textarea id="student-note" class="note-surface" placeholder="Ghi chú của học sinh"></textarea>
+    <p class="save-state" id="note-state"></p>
+  </div>
+</article>
+<article class="card notes-block">
+  <div class="notes-block-header">Todo list</div>
+  <div id="todo-panel">
+    <div class="note-surface todo-surface">
+      <div id="todo-list" class="todo-list"></div>
+      <div class="todo-actions">
+        <button id="add-todo" class="add-todo" type="button" aria-label="Thêm việc cần làm">+</button>
+        <button id="delete-todo" class="delete-todo" type="button" aria-label="Chế độ xóa việc">−</button>
+      </div>
+    </div>
+  </div>
+</article>
+</section></main>
 <div id="assignment-modal" class="modal-back hidden"><section class="grading-modal modal"><div class="panel-heading"><h2>Bảng bài tập</h2><button class="icon-control" id="close-assignments" type="button">&times;</button></div><div class="status-tabs assignment-tabs"><button class="chip on" data-modal-status="open">Chưa hoàn thành</button><button class="chip" data-modal-status="completed">Đã hoàn thành</button></div><div id="assignment-list" class="grading-list"></div></section></div><div id="footer-slot"></div><script type="module" src="js/student-home.js"></script></body></html>
