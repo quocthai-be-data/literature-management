@@ -92,6 +92,10 @@ service cloud.firestore {
     }
     match /studentNotes/{uid} { allow read, write: if passwordOk() && request.auth.uid == uid; }
     match /calendarNotes/{uid} { allow read, write: if passwordOk() && request.auth.uid == uid; }
+    match /sharedCalendarNotes/{id} {
+      allow read: if passwordOk();
+      allow create, update: if isTeacher();
+    }
     match /schoolSettings/{id} {
       allow read: if passwordOk();
       allow write: if isTeacher();
