@@ -78,6 +78,7 @@ export function watchAuth(callback) {
 }
 
 export async function logout() {
+  if (auth?.currentUser) sessionStorage.removeItem(`nv-clock-${auth.currentUser.uid}`);
   if (auth) await signOut(auth);
 }
 
