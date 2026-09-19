@@ -90,6 +90,13 @@ service cloud.firestore {
     match /teacherNotes/{uid} {
       allow read, write: if isTeacher() && request.auth.uid == uid;
     }
+    match /studentNotes/{uid} { allow read, write: if passwordOk() && request.auth.uid == uid; }
+    match /calendarNotes/{uid} { allow read, write: if passwordOk() && request.auth.uid == uid; }
+    match /assignmentProgress/{id} {
+      allow read: if isTeacher() || (passwordOk() && resource.data.studentId == request.auth.uid);
+      allow create, update: if passwordOk() && request.resource.data.studentId == request.auth.uid;
+      allow delete: if passwordOk() && resource.data.studentId == request.auth.uid;
+    }
 
     match /{document=**} {
       allow read, write: if false;
