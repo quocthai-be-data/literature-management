@@ -74,6 +74,7 @@ export function headerHtml({ active = "home", who = "", role = "teacher" } = {})
     <a class="${active === "hoc" ? "on" : ""}" href="${bai}">Bài giảng</a>
     <a class="${active === "luyen" ? "on" : ""}" href="${luyen}">Luyện tập</a>
     <a class="${active === "tailieu" ? "on" : ""}" href="tai-lieu.html">Tài liệu tham khảo</a>
+    ${role === "student" ? `<a class="${active === "clock" ? "on" : ""}" href="dong-ho.html">Đồng hồ</a>` : ""}
   </nav>
   <div class="nav-user">
     <span class="nav-name">${who || ""}</span>

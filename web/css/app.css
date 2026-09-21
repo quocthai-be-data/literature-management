@@ -494,6 +494,9 @@ table.data th, table.data td { text-align: left; padding: 8px 6px; border-bottom
 .student-home-page .grading-stat { min-height: 142px; display: flex; flex-direction: column; justify-content: center; }.student-home-page .grading-stat b { margin-bottom: 0; }
 .calendar-note-modal { width: min(620px, 90vw); padding: 24px 26px; }.calendar-note-modal textarea { min-height: 220px; resize: vertical; line-height: 1.55; }.calendar-note-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 .calendar-note-editor { width: min(620px, 90vw); padding: 24px 26px; }.calendar-note-editor textarea { min-height: 220px; resize: vertical; line-height: 1.55; }.note-color-editor { margin-top: 8px; }.private-note-colors { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }.private-note-color { width: 44px; height: 44px; border: 2px solid transparent; border-radius: 50%; background: var(--note-color); cursor: pointer; }.private-note-color.selected { border-color: var(--ink); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }.calendar-context-menu { min-width: 170px; }.cal-day.private-calendar-note { background: var(--private-calendar-color, #BFDBFE); color: var(--ink); font-weight: 750; box-shadow: inset 0 0 0 2px rgba(22,48,56,.35); }
+
+/* Đồng hồ học tập */
+.clock-page { max-width: 1080px; padding-top: 48px; }.clock-tabs { display: grid; grid-template-columns: 1fr 1.15fr 1.35fr; width: min(850px, 100%); margin: 0 auto 40px; overflow: hidden; border-radius: 999px; background: var(--teal); }.clock-tab { min-height: 74px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 20px; font-weight: 700; transition: background .18s ease; }.clock-tab:hover { background: rgba(255,255,255,.16); }.clock-tab.on { background: var(--lime-pale); border-radius: 999px; }.clock-content { min-height: 410px; }.clock-stage { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 18px 38px; }.clock-stage .section-label { margin-bottom: 6px; }.clock-subtitle { color: var(--muted); font-size: 14px; }.clock-display { display: block; margin: 52px 0 56px; color: var(--ink); font-size: clamp(48px, 7vw, 78px); font-weight: 500; letter-spacing: .025em; font-variant-numeric: tabular-nums; }.clock-actions { display: grid; grid-template-columns: repeat(3, minmax(150px, 1fr)); width: min(600px, 100%); overflow: hidden; border-radius: 999px; background: var(--teal); }.clock-actions.countdown-actions { grid-template-columns: repeat(4, 1fr); width: min(790px, 100%); }.clock-action { min-height: 68px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-weight: 700; font-size: 17px; }.clock-action:hover:not(:disabled) { background: rgba(255,255,255,.16); }.clock-action:disabled { color: rgba(22,48,56,.35); cursor: not-allowed; }.clock-action.start { background: rgba(255,255,255,.1); }.clock-message { min-height: 24px; margin: -38px 0 14px; color: var(--teal-dark); font-weight: 650; }.quick-times { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 58px 0 52px; }.quick-times button { min-width: 62px; min-height: 48px; padding: 8px 12px; border: 0; border-radius: 10px; background: var(--teal); color: var(--ink); font-weight: 700; cursor: pointer; }.quick-times button:hover { background: var(--teal-dark); color: #fff; }.custom-countdown { display: grid; grid-template-columns: 190px 190px auto; align-items: end; gap: 12px; width: min(610px, 100%); text-align: left; }.custom-countdown label { margin: 0; font-weight: 650; }.custom-countdown select { margin-top: 5px; }.custom-countdown .btn { min-height: 44px; text-align: center; font-weight: 700; }.exam-display { margin-bottom: 34px; }.exam-message { max-width: 820px; padding: 17px 24px; border-radius: 14px; background: #e7f8fa; color: var(--ink); font-size: clamp(20px, 3vw, 32px); font-weight: 500; }.exam-complete { padding: 18px 28px; border-radius: 18px; background: var(--teal-dark); color: #fff; }
 .todo-actions { position: absolute; left: 13px; top: 10px; display: flex; gap: 6px; }.todo-actions .add-todo, .delete-todo { position: static; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: var(--teal-dark); cursor: pointer; font-size: 26px; line-height: 1; font-weight: 700; }.delete-todo.on, .delete-todo:hover { color: var(--danger); }.todo-delete-row { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; background: #fff1f1; color: var(--danger); cursor: pointer; font-size: 18px; line-height: 1; }
 
 .home-hero {
@@ -682,4 +685,34 @@ table.data th, table.data td { text-align: left; padding: 8px 6px; border-bottom
   .grading-row {
     grid-template-columns: 1fr;
   }
+
+  .clock-page { padding-top: 26px; }
+
+  .clock-tabs {
+    grid-template-columns: 1fr;
+    border-radius: 16px;
+  }
+
+  .clock-tab,
+  .clock-tab.on {
+    min-height: 52px;
+    border-radius: 0;
+    font-size: 17px;
+  }
+
+  .clock-display {
+    margin: 38px 0 42px;
+    font-size: clamp(34px, 10vw, 54px);
+  }
+
+  .clock-actions,
+  .clock-actions.countdown-actions,
+  .custom-countdown {
+    grid-template-columns: 1fr;
+    border-radius: 14px;
+  }
+
+  .clock-action { min-height: 52px; }
+
+  .quick-times { margin: 34px 0; }
 }
